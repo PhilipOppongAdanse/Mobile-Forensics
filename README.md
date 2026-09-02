@@ -74,7 +74,6 @@ Throughout these investigations, I utilize a variety of forensic and reverse eng
 | Tool | Purpose |
 |--------|----------|
 | ALEAPP | Android artifact parsing |
-| iLEAPP | iOS artifact parsing |
 | JADX-GUI | APK reverse engineering |
 | CyberChef | Data decoding and transformation |
 | SQLite Browser | Database examination |
