@@ -75,14 +75,10 @@ Throughout these investigations, I utilize a variety of forensic and reverse eng
 |--------|----------|
 | ALEAPP | Android artifact parsing |
 | iLEAPP | iOS artifact parsing |
-| Autopsy | Digital forensic analysis |
 | JADX-GUI | APK reverse engineering |
-| APKTool | APK decompilation |
 | CyberChef | Data decoding and transformation |
 | SQLite Browser | Database examination |
-| FTK Imager | Evidence acquisition |
-| Magnet AXIOM | Mobile artifact analysis |
-| Cellebrite UFED | Mobile acquisition and examination |
+
 
 ---
 
