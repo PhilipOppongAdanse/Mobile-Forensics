@@ -1,107 +1,65 @@
-# Android Device Analysis Using Android Debug Bridge (ADB)
+# Android ADB Forensics Analysis - itel P55 (Android 13)
 
 ## Overview
 
-In this project, I performed a forensic examination of an Android device using Android Debug Bridge (ADB) from a Kali Linux virtual machine. The objective was to collect and analyze device information, enumerate installed applications, extract system logs, review device usage statistics, and document artifacts that could support a digital forensic investigation.
+In this practical mobile forensics exercise, I performed a forensic examination of an Android device using the Android Debug Bridge (ADB). The objective of this analysis was to demonstrate how ADB can be used to acquire and analyze device information without rooting the device.
 
-ADB provides investigators with a command-line interface to communicate directly with Android devices. When USB Debugging is enabled, it becomes possible to gather a wide range of system information without requiring third-party forensic tools.
+Using Kali Linux running inside VMware Workstation, I established a connection between my forensic workstation and the target Android device (itel P55) and collected various artefacts including system information, installed applications, battery statistics, usage timelines, boot information, power management records, and system diagnostic reports.
 
----
-
-## Investigation Objectives
-
-The primary objectives of this examination were to:
-
-- Establish communication between the Android device and forensic workstation.
-- Identify device specifications and operating system details.
-- Enumerate installed applications and package locations.
-- Extract system logs for forensic review.
-- Collect battery and power-related artifacts.
-- Examine device usage statistics.
-- Review application execution history.
-- Identify boot-related information.
-- Generate comprehensive system reports.
-- Document the forensic acquisition process.
+This project demonstrates foundational Android forensic acquisition techniques that can assist investigators during mobile device examinations, incident response investigations, and digital evidence collection.
 
 ---
 
-# Laboratory Setup
+# Investigation Details
 
-## Forensic Workstation
-
-| Item | Description |
-|--------|-------------|
-| Operating System | Kali Linux |
-| Environment | VMware Workstation |
+| Item | Details |
+|--------|---------|
+| Investigation Type | Android Mobile Forensics |
 | Acquisition Method | Android Debug Bridge (ADB) |
-| Investigation Type | Android Device Examination |
-
----
-
-## Evidence Device
-
-| Attribute | Value |
-|------------|---------|
-| Device Name | itel P55 |
-| Model | itel A666L |
+| Host Operating System | Kali Linux |
+| Virtualization Platform | VMware Workstation |
+| Mobile Device | itel P55 |
+| Model Number | A666L |
 | Android Version | Android 13 |
+| Storage Capacity | 128 GB |
+| RAM | 8 GB (4 GB Physical + 4 GB Extended) |
 | CPU | Unisoc T606 (UMS9230) |
-| RAM | 8 GB |
-| Internal Storage | 128 GB |
-| Battery Capacity | 5000mAh |
+| Examiner | Philip Oppong Adanse |
 
 ---
 
-# Evidence Documentation
+# Investigation Objectives
 
-## Examination Environment
+The objectives of this examination were:
 
-The Android device was connected to a forensic workstation running Kali Linux through VMware Workstation. Communication was established through Android Debug Bridge (ADB) after enabling USB Debugging on the device.
-
-### Examination Setup
-
-![Forensic Setup](images/16-device-front-image.jpg)
-
-The image above shows the Android device connected to the forensic workstation during acquisition.
-
----
-
-## Device Rear View
-
-![Device Rear View](images/17-device-back-image.jpg)
-
-The rear view of the evidence device was documented to preserve its physical condition and identifying characteristics before analysis.
+- Verify communication between the forensic workstation and the Android device.
+- Collect device identification information.
+- Enumerate installed applications.
+- Identify application installation locations.
+- Extract diagnostic and system logs.
+- Review battery and power consumption statistics.
+- Examine device usage history.
+- Determine device uptime and boot information.
+- Collect system reports for forensic review.
+- Document the physical condition of the device.
 
 ---
 
-## Device Specifications
+# Forensic Workstation Setup
 
-![Device Specifications](images/18-device-specification.jpg)
+To perform this examination, I configured a forensic workstation using Kali Linux running inside VMware Workstation.
 
-The device specification page was captured to verify hardware and operating system information directly from the device.
+The Android device was connected to the virtual machine through USB passthrough, allowing ADB to communicate directly with the device.
 
----
-
-# Methodology
-
-The examination followed a structured workflow:
-
-1. Verify ADB connectivity.
-2. Identify device properties.
-3. Enumerate installed applications.
-4. Extract system logs.
-5. Review battery information.
-6. Analyze device usage statistics.
-7. Review application activity history.
-8. Examine power management artifacts.
-9. Identify boot-related information.
-10. Generate system diagnostic reports.
+The forensic environment provided a controlled platform for collecting evidence while maintaining repeatable acquisition procedures.
 
 ---
 
-# Step 1: ADB Connectivity Verification
+# Evidence Acquisition Process
 
-Before any acquisition could occur, communication between the forensic workstation and the Android device was verified.
+## Step 1: Device Connection Verification
+
+The first step involved verifying that the Android device was properly connected and recognized by ADB.
 
 ### Command
 
@@ -109,121 +67,143 @@ Before any acquisition could occur, communication between the forensic workstati
 adb devices
 ```
 
-### Screenshot
+### Purpose
 
-![ADB Verification](images/01-adb-connection-verification.png)
+This command confirms communication between the forensic workstation and the target device.
 
-### Analysis
+### Evidence
 
-The device successfully appeared within the ADB device list.
+![ADB Connection Verification](Evidence/01-adb-connection-verification.png)
 
-This confirmed:
+### Findings
 
-- USB Debugging was enabled.
-- The workstation could communicate with the device.
-- The device was ready for forensic examination.
+The device was successfully detected and listed by ADB, confirming that forensic acquisition activities could proceed.
 
 ---
 
-# Step 2: Device Identification
+## Step 2: Device Identification and System Information
 
-Basic system information was collected to identify the device under examination.
+After confirming connectivity, I collected basic information about the device.
 
 ### Commands
 
 ```bash
-adb shell getprop ro.product.model
-
-adb shell getprop ro.build.version.release
-
-adb shell getprop ro.serialno
+adb shell getprop
 ```
 
-### Screenshot
+```bash
+adb shell getprop | grep product
+```
 
-![System Information](images/02-basic-system-info.png)
+### Purpose
 
-### Analysis
+These commands retrieve Android system properties, including:
 
-The commands returned information including:
+- Device manufacturer
+- Product information
+- Model information
+- Build details
+- Android version
+- System configuration
 
-- Device Model
-- Android Version
-- Serial Number
-- Build Information
+### Evidence
 
-These artifacts are useful for evidence identification and chain-of-custody documentation.
+![System Information](Evidence/02-basic-system-info.png)
+
+### Findings
+
+The device was identified as:
+
+- Device Name: itel P55
+- Model: A666L
+- Android Version: 13
+- Manufacturer: itel
+
+These artefacts assist in identifying the device during investigations and validating examination scope.
 
 ---
 
-# Step 3: Installed Application Enumeration
+# Installed Application Analysis
 
-Installed applications were identified to determine software present on the device.
+Understanding installed applications can reveal user behaviour, communication platforms, cloud services, and potential sources of digital evidence.
+
+---
+
+## Application Enumeration
 
 ### Command
 
 ```bash
-adb shell pm list packages -f
+adb shell pm list packages
 ```
 
-### Screenshots
+### Purpose
 
-![Installed Apps](images/03-installed-apps-and-path-01.png)
+This command lists all applications installed on the device.
 
-![Installed Apps](images/04-installed-apps-and-path-02.png)
+### Evidence
 
-![Installed Apps](images/05-installed-apps-and-path-03.png)
+![Installed Applications 1](Evidence/03-installed-apps-and-path-01.png)
 
-### Analysis
+![Installed Applications 2](Evidence/04-installed-apps-and-path-02.png)
 
-The output revealed:
+![Installed Applications 3](Evidence/05-installed-apps-and-path-03.png)
+
+### Findings
+
+Application enumeration revealed multiple installed packages, including:
 
 - System applications
-- Vendor-installed applications
-- User-installed applications
-- APK installation paths
+- Vendor applications
+- Third-party applications
+- User-installed software
 
-Installed application enumeration is important because it helps identify:
+The package inventory can be used to identify:
 
-- Potential communication platforms
 - Social media applications
+- Messaging platforms
 - Financial applications
-- Suspicious software
-- Malware indicators
+- Cloud storage services
+- Browser applications
+
+These applications may later become acquisition targets during advanced forensic examinations.
 
 ---
 
-# Step 4: System Log Acquisition
+# System Log Collection
 
-System logs were extracted to identify historical system activity.
+System logs can provide valuable evidence relating to device activity, errors, user actions, and application events.
 
 ### Command
 
 ```bash
-adb logcat -d > system_logs.txt
+adb logcat
 ```
 
-### Screenshot
+### Purpose
 
-![System Logs](images/06-system-log-extraction.png)
+To retrieve Android log data generated by the operating system and installed applications.
 
-### Analysis
+### Evidence
 
-System logs may contain:
+![System Log Extraction](Evidence/06-system-log-extraction.png)
 
-- Application execution events
-- System warnings
-- Error messages
-- Network activity
-- Device events
+### Findings
 
-Log files often assist investigators when reconstructing timelines.
+Log data contained:
+
+- Application events
+- System processes
+- Background service activity
+- Operating system messages
+
+Log analysis can assist investigators in reconstructing device activity timelines.
 
 ---
 
-# Step 5: Battery and Power Metrics
+# Battery and Power Analysis
 
-Battery information was collected using Android's built-in diagnostic framework.
+Battery statistics often provide insight into application activity and device usage patterns.
 
 ### Command
 
@@ -231,27 +211,26 @@ Battery information was collected using Android's built-in diagnostic framework.
 adb shell dumpsys battery
 ```
 
-### Screenshot
+### Evidence
 
-![Battery Information](images/07-battery-power-metrics.png)
+![Battery Metrics](Evidence/07-battery-power-metrics.png)
 
-### Analysis
+### Findings
 
-Battery artifacts included:
+The report revealed:
 
-- Battery level
+- Battery level information
 - Charging status
-- Battery health
-- Voltage values
-- Temperature readings
+- Power source information
+- Battery health metrics
 
-These artifacts may provide insight into device state during acquisition.
+These artefacts can support timeline reconstruction and identify device usage patterns.
 
 ---
 
-# Step 6: Device Usage Statistics
+# Device Usage Statistics
 
-Android usage statistics were examined to identify user interaction patterns.
+Android stores application usage information that can reveal user interaction history.
 
 ### Command
 
@@ -259,47 +238,48 @@ Android usage statistics were examined to identify user interaction patterns.
 adb shell dumpsys usagestats
 ```
 
-### Screenshot
+### Evidence
 
-![Usage Statistics](images/08-device-usage-stats.png)
+![Usage Statistics](Evidence/08-device-usage-stats.png)
 
-### Analysis
+### Findings
 
-Usage statistics may reveal:
+Usage statistics contained records showing:
 
-- Frequently used applications
-- Recent application activity
-- Foreground application usage
-- Device interaction patterns
+- Application launches
+- Foreground activity
+- Usage durations
+- User interaction patterns
 
-These records can support user activity reconstruction.
-
----
-
-# Step 7: Application Activity Timeline
-
-Application execution information was reviewed to identify application usage history.
-
-### Screenshot
-
-![Application Timeline](images/09-device-application-timeline.png)
-
-### Analysis
-
-The extracted information may contain:
-
-- Application launch timestamps
-- Background execution events
-- Session activity
-- User interaction records
-
-This information is valuable during timeline analysis.
+These artefacts can help determine which applications were actively used on the device.
 
 ---
 
-# Step 8: Power Management Analysis
+# Application Timeline Analysis
 
-Power management exemptions were examined.
+Application usage timelines assist investigators in understanding user activity across time.
+
+### Command
+
+```bash
+adb shell dumpsys usagestats
+```
+
+### Evidence
+
+![Application Timeline](Evidence/09-device-application-timeline.png)
+
+### Findings
+
+The extracted timeline provided historical records showing when applications became active and how frequently they were used.
+
+This information can be valuable during behavioural and timeline analysis.
+
+---
+
+# Power Whitelist Examination
+
+Android maintains a whitelist of applications exempt from certain power management restrictions.
 
 ### Command
 
@@ -307,50 +287,47 @@ Power management exemptions were examined.
 adb shell dumpsys deviceidle whitelist
 ```
 
-### Screenshot
+### Evidence
 
-![Whitelist Analysis](images/10-power-white-listed-apps.png)
+![Power Whitelist](Evidence/10-power-white-listed-apps.png)
 
-### Analysis
+### Findings
 
-Applications found within the whitelist may:
+The whitelist identified applications permitted to operate with fewer battery restrictions.
 
-- Operate continuously
-- Ignore battery optimization
-- Maintain persistent network access
-
-These applications may warrant additional review during investigations.
+Such applications may continue operating in the background and can generate persistent evidence.
 
 ---
 
-# Step 9: Boot Count Analysis
+# Boot Time Analysis
 
-Boot-related artifacts were collected to determine device restart history.
+Determining device uptime and boot history is often important in forensic investigations.
 
 ### Command
 
 ```bash
-adb shell settings list global | grep boot_count
+adb shell uptime
 ```
 
-### Screenshot
+### Evidence
 
-![Boot Count](images/11-device-global-boot-time.png)
+![Boot Information](Evidence/11-device-global-boot-time.png)
 
-### Analysis
+### Findings
 
-Boot count artifacts may indicate:
+Boot information revealed:
 
-- Device restart frequency
-- Operational history
-- Potential anti-forensic activity
-- Device maintenance events
+- Device uptime
+- Time since last reboot
+- Operational duration
+
+These artefacts assist in constructing forensic timelines.
 
 ---
 
-# Step 10: System Diagnostic Collection
+# Comprehensive System Diagnostics
 
-A comprehensive system report was generated.
+To gather additional forensic artefacts, I generated detailed system reports using Android's diagnostic framework.
 
 ### Command
 
@@ -358,105 +335,132 @@ A comprehensive system report was generated.
 adb shell dumpsys
 ```
 
-### Screenshots
+### Evidence
 
-![System Report](images/12-dump-sys-report.png)
+![DumpSys Report](Evidence/12-dump-sys-report.png)
 
-![System Report](images/13-system-report-01.png)
+![System Report 1](Evidence/13-system-report-01.png)
 
-![System Report](images/14-system-report-02.png)
+![System Report 2](Evidence/14-system-report-02.png)
 
-![System Report](images/15-system-report-03.png)
+![System Report 3](Evidence/15-system-report-03.png)
 
-### Analysis
+### Findings
 
-The `dumpsys` report contains extensive forensic information including:
+The generated reports contained extensive information including:
 
 - Running services
 - Active processes
+- Memory information
 - Hardware configuration
-- Device settings
-- Memory usage
+- Network data
 - Power statistics
-- Network information
-- System status
+- System state information
 
-This dataset represents one of the richest sources of Android forensic artifacts accessible through ADB.
-
----
-
-# Key Findings
-
-During this examination I successfully obtained:
-
-- Device identification information.
-- Android operating system details.
-- Installed application inventory.
-- Application installation paths.
-- System logs.
-- Battery statistics.
-- Device usage records.
-- Application activity artifacts.
-- Power management information.
-- Boot history artifacts.
-- Comprehensive system diagnostic reports.
+These reports provide investigators with a comprehensive snapshot of the device at the time of examination.
 
 ---
 
-# Forensic Value of ADB
+# Physical Device Documentation
 
-Android Debug Bridge provides investigators with a powerful method of collecting information from Android devices when USB Debugging is available.
+Proper forensic documentation requires recording the physical appearance and specifications of the evidence device.
 
-The tool enables:
+---
 
-- Rapid triage of Android devices.
-- Device profiling.
-- System artifact collection.
-- Application enumeration.
-- Timeline development.
-- Operational analysis.
+## Front View Documentation
 
-Although ADB does not replace full physical or file system acquisition tools such as Cellebrite, Magnet AXIOM, or Oxygen Forensics, it remains a valuable technique for preliminary examinations and laboratory exercises.
+### Evidence
+
+![Front View](Evidence/16-device-front-image.jpg)
+
+### Observations
+
+The front of the device was photographed to document:
+
+- Screen condition
+- Device appearance
+- Device state during examination
+- Physical characteristics
+
+---
+
+## Rear View Documentation
+
+### Evidence
+
+![Rear View](Evidence/17-device-back-image.jpg)
+
+### Observations
+
+The rear photograph documents:
+
+- Camera configuration
+- Device branding
+- Physical condition
+- Device identification features
+
+---
+
+## Device Specifications Documentation
+
+### Evidence
+
+![Device Specifications](Evidence/18-device-specification.jpg)
+
+### Recorded Specifications
+
+| Specification | Value |
+|--------------|--------|
+| Device Name | itel P55 |
+| Model | A666L |
+| Android Version | 13 |
+| CPU | UMS9230 (T606) |
+| RAM | 8 GB |
+| Storage | 128 GB |
+| Battery | 5000 mAh |
+| Front Camera | 8 MP |
+| Rear Camera | 50 MP Dual Camera |
+
+---
+
+# Key Forensic Artefacts Identified
+
+During this examination, I successfully acquired the following categories of forensic artefacts:
+
+- Device identification data
+- Android system properties
+- Installed application inventory
+- Application package locations
+- System log records
+- Battery statistics
+- Power management information
+- Usage statistics
+- Application timelines
+- Device uptime information
+- Diagnostic reports
+- Physical device documentation
+
+---
+
+# Limitations
+
+This examination was performed using standard ADB access without rooting the device.
+
+As a result:
+
+- Protected application databases were not accessed.
+- Deleted data recovery was not performed.
+- Full file system acquisition was not conducted.
+- Physical extraction was not performed.
+
+Despite these limitations, ADB provided substantial forensic artefacts suitable for preliminary examinations and intelligence gathering.
 
 ---
 
 # Conclusion
 
-This project demonstrated how Android Debug Bridge can be used to acquire and analyze forensic artifacts from an Android device running Android 13.
+In this investigation, I successfully conducted a forensic examination of an Android device using Android Debug Bridge (ADB) on a Kali Linux forensic workstation.
 
-Using a structured forensic methodology, I established communication with the device, identified system properties, enumerated installed applications, collected logs, reviewed battery and usage statistics, examined power management artifacts, and generated comprehensive system reports.
+The examination demonstrated how ADB can be leveraged to collect valuable evidence from Android devices without requiring root access. Through the acquisition process, I documented device specifications, enumerated installed applications, reviewed system logs, analyzed battery statistics, examined usage timelines, identified power management artefacts, and generated comprehensive diagnostic reports.
 
-The examination produced multiple categories of evidence that could support forensic investigations, incident response activities, and digital evidence analysis.
-
----
-
-## Tools Used
-
-- Kali Linux
-- VMware Workstation
-- Android Debug Bridge (ADB)
-- Android 13 Device
-- Linux Terminal
-
----
-
-## Skills Demonstrated
-
-- Android Forensics
-- Mobile Device Examination
-- Digital Evidence Collection
-- Application Enumeration
-- System Artifact Analysis
-- Timeline Reconstruction
-- Evidence Documentation
-- Log Analysis
-- Device Profiling
-- DFIR Methodology
-
----
-
-### Author
-
-**Phil Oppong**  
-Digital Forensics & Incident Response (DFIR) Practitioner
-
+The artefacts collected during this examination provide valuable insight into device configuration, user activity, system state, and operational history. This exercise highlights the effectiveness of ADB as a practical forensic acquisition tool and reinforces the importance of systematic evidence collection and documentation during Android mobile forensic investigations.
