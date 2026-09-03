@@ -45,6 +45,68 @@ The objectives of this examination were:
 
 ---
 
+# Physical Device Documentation
+
+Proper forensic documentation requires recording the physical appearance and specifications of the evidence device.
+
+---
+
+## Front View Documentation
+
+### Evidence
+
+![Front View](Evidence/16-device-front-image.jpg)
+
+### Observations
+
+The front of the device was photographed to document:
+
+- Screen condition
+- Device appearance
+- Device state during examination
+- Physical characteristics
+
+---
+
+## Rear View Documentation
+
+### Evidence
+
+![Rear View](Evidence/17-device-back-image.jpg)
+
+### Observations
+
+The rear photograph documents:
+
+- Camera configuration
+- Device branding
+- Physical condition
+- Device identification features
+
+---
+
+## Device Specifications Documentation
+
+### Evidence
+
+![Device Specifications](Evidence/18-device-specification.jpg)
+
+### Recorded Specifications
+
+| Specification | Value |
+|--------------|--------|
+| Device Name | itel P55 |
+| Model | A666L |
+| Android Version | 13 |
+| CPU | UMS9230 (T606) |
+| RAM | 8 GB |
+| Storage | 128 GB |
+| Battery | 5000 mAh |
+| Front Camera | 8 MP |
+| Rear Camera | 50 MP Dual Camera |
+
+---
+
 # Forensic Workstation Setup
 
 To perform this examination, I configured a forensic workstation using Kali Linux running inside VMware Workstation.
@@ -271,9 +333,281 @@ adb shell dumpsys usagestats
 
 ### Findings
 
-The extracted timeline provided historical records showing when applications became active and how frequently they were used.
+The extracted timeline provided historical records showing when applications became active and how frequently they were used. Based on the extracted Android UsageStats artefacts shown in the timeline output, I reconstructed the sequence of user interactions observed on the device during the examination period. This information can be valuable during behavioural and timeline analysis.
 
-This information can be valuable during behavioural and timeline analysis.
+## Timeline of User Activity
+
+### 2026-09-02 10:31:52 - Device Launcher Active
+
+The first recorded activity indicates that the device was operating on the default itel launcher.
+
+**Package Observed**
+
+```text
+com.transsion.itel.launcher
+```
+
+**Event Type**
+
+```text
+type=LOCUS_ID_SET
+```
+
+#### Interpretation
+
+This event suggests that the user was on the device home screen prior to launching any application.
+
+---
+
+### 2026-09-02 10:31:54 - WhatsApp Business Opened
+
+Shortly after interacting with the launcher, the user opened WhatsApp Business.
+
+**Package Observed**
+
+```text
+com.whatsapp.w4b
+```
+
+**Activity**
+
+```text
+com.whatsapp.Conversation
+```
+
+**Event Type**
+
+```text
+type=ACTIVITY_RESUMED
+```
+
+#### Interpretation
+
+The Conversation activity was resumed, indicating that the user accessed an active WhatsApp Business chat window.
+
+---
+
+### 2026-09-02 10:31:54 - WhatsApp Authentication Activity Triggered
+
+Additional records show an authentication-related activity occurring within WhatsApp Business.
+
+**Activity**
+
+```text
+com.whatsapp.authentication.AppAuthenticationActivity
+```
+
+**Event Type**
+
+```text
+type=ACTIVITY_PAUSED
+```
+
+#### Interpretation
+
+This event suggests that WhatsApp initiated an internal authentication or security verification process while the application was in use.
+
+---
+
+### 2026-09-02 10:32:01 - WhatsApp Business Closed or Backgrounded
+
+The WhatsApp conversation activity was subsequently stopped.
+
+**Package**
+
+```text
+com.whatsapp.w4b
+```
+
+**Event Type**
+
+```text
+type=ACTIVITY_STOPPED
+```
+
+#### Interpretation
+
+The user exited the active conversation or moved WhatsApp Business into the background.
+
+---
+
+### 2026-09-02 10:32:01 - Return to Home Screen
+
+Immediately after leaving WhatsApp Business, the launcher became active again.
+
+**Package**
+
+```text
+com.transsion.itel.launcher
+```
+
+**Event Type**
+
+```text
+type=ACTIVITY_RESUMED
+```
+
+#### Interpretation
+
+This indicates that the user briefly returned to the device home screen.
+
+---
+
+### 2026-09-02 10:32:02 - SportyBet Opened
+
+The next recorded application launched by the user was SportyBet.
+
+**Package**
+
+```text
+com.sportybet.android
+```
+
+**Activity**
+
+```text
+com.sportybet.android.home.MainActivity
+```
+
+**Event Type**
+
+```text
+type=ACTIVITY_RESUMED
+```
+
+#### Interpretation
+
+The SportyBet application was brought into the foreground and became the active application.
+
+---
+
+### 2026-09-02 10:32:03 - SportyBet Share Activity Initiated
+
+Within the SportyBet application, a sharing activity was launched.
+
+**Activity**
+
+```text
+com.sportybet.plugin.share.activities.ShareActivity
+```
+
+**Event Type**
+
+```text
+type=ACTIVITY_RESUMED
+```
+
+#### Interpretation
+
+The user accessed a sharing feature available within the application.
+
+---
+
+### 2026-09-02 10:32:06 - Return to SportyBet Main Activity
+
+The sharing activity was exited and the user returned to the primary SportyBet interface.
+
+**Activity**
+
+```text
+com.sportybet.android.home.MainActivity
+```
+
+**Event Type**
+
+```text
+type=ACTIVITY_RESUMED
+```
+
+#### Interpretation
+
+This indicates that the sharing function was closed and the application resumed normal operation.
+
+---
+
+### 2026-09-02 10:32:09 - Share Activity Reopened
+
+A second ShareActivity event was recorded.
+
+**Activity**
+
+```text
+com.sportybet.plugin.share.activities.ShareActivity
+```
+
+**Event Type**
+
+```text
+type=ACTIVITY_RESUMED
+```
+
+#### Interpretation
+
+The user appears to have reopened the sharing feature within SportyBet.
+
+This is the final recorded foreground activity observed in the extracted UsageStats artefacts.
+
+---
+
+## Reconstructed User Navigation Path
+
+```text
+itel Launcher
+      │
+      ▼
+WhatsApp Business
+      │
+      ▼
+WhatsApp Conversation
+      │
+      ▼
+WhatsApp Authentication Activity
+      │
+      ▼
+Return to Launcher
+      │
+      ▼
+SportyBet Main Activity
+      │
+      ▼
+SportyBet Share Activity
+      │
+      ▼
+SportyBet Main Activity
+      │
+      ▼
+SportyBet Share Activity
+      │
+      ▼
+Last Recorded Activity
+```
+
+---
+
+## Forensic Findings
+
+Based on the analyzed UsageStats artefacts, I determined that the user initially interacted with the device launcher before opening WhatsApp Business and accessing a conversation window. After approximately seven seconds of activity within WhatsApp Business, the user exited the application and returned to the home screen.
+
+Shortly thereafter, the user launched the SportyBet application. During the SportyBet session, the user accessed the application's sharing functionality multiple times, as evidenced by repeated ShareActivity events. The final recorded foreground activity within the extracted artefacts was associated with SportyBet's ShareActivity.
+
+No additional application transitions were observed after the final SportyBet activity, making it the last recorded user interaction within the available UsageStats evidence.
+
+---
+
+## Timeline Summary Table
+
+| Timestamp | Application | Activity | Observation |
+|------------|------------|------------|-------------|
+| 10:31:52 | itel Launcher | Launcher Active | User on home screen |
+| 10:31:54 | WhatsApp Business | Conversation Activity | Chat window opened |
+| 10:31:54 | WhatsApp Business | Authentication Activity | Security/authentication event |
+| 10:32:01 | WhatsApp Business | Activity Stopped | WhatsApp exited/backgrounded |
+| 10:32:01 | itel Launcher | Activity Resumed | Returned to home screen |
+| 10:32:02 | SportyBet | MainActivity | Application launched |
+| 10:32:03 | SportyBet | ShareActivity | Sharing feature accessed |
+| 10:32:06 | SportyBet | MainActivity | Returned to application |
+| 10:32:09 | SportyBet | ShareActivity | Sharing feature reopened |
+| Final Activity | SportyBet | ShareActivity | Last recorded foreground activity |
 
 ---
 
@@ -361,67 +695,6 @@ These reports provide investigators with a comprehensive snapshot of the device 
 
 ---
 
-# Physical Device Documentation
-
-Proper forensic documentation requires recording the physical appearance and specifications of the evidence device.
-
----
-
-## Front View Documentation
-
-### Evidence
-
-![Front View](Evidence/16-device-front-image.jpg)
-
-### Observations
-
-The front of the device was photographed to document:
-
-- Screen condition
-- Device appearance
-- Device state during examination
-- Physical characteristics
-
----
-
-## Rear View Documentation
-
-### Evidence
-
-![Rear View](Evidence/17-device-back-image.jpg)
-
-### Observations
-
-The rear photograph documents:
-
-- Camera configuration
-- Device branding
-- Physical condition
-- Device identification features
-
----
-
-## Device Specifications Documentation
-
-### Evidence
-
-![Device Specifications](Evidence/18-device-specification.jpg)
-
-### Recorded Specifications
-
-| Specification | Value |
-|--------------|--------|
-| Device Name | itel P55 |
-| Model | A666L |
-| Android Version | 13 |
-| CPU | UMS9230 (T606) |
-| RAM | 8 GB |
-| Storage | 128 GB |
-| Battery | 5000 mAh |
-| Front Camera | 8 MP |
-| Rear Camera | 50 MP Dual Camera |
-
----
 
 # Key Forensic Artefacts Identified
 
@@ -464,3 +737,33 @@ In this investigation, I successfully conducted a forensic examination of an And
 The examination demonstrated how ADB can be leveraged to collect valuable evidence from Android devices without requiring root access. Through the acquisition process, I documented device specifications, enumerated installed applications, reviewed system logs, analyzed battery statistics, examined usage timelines, identified power management artefacts, and generated comprehensive diagnostic reports.
 
 The artefacts collected during this examination provide valuable insight into device configuration, user activity, system state, and operational history. This exercise highlights the effectiveness of ADB as a practical forensic acquisition tool and reinforces the importance of systematic evidence collection and documentation during Android mobile forensic investigations.
+
+## Disclaimer
+
+This analysis was conducted exclusively on **my personally owned Android device** for educational, research, and digital forensic training purposes.
+
+The device examined throughout this project is an **itel P55 (Android 13)** that belongs to me, and all data collected, analyzed, and documented originated from my own device. No third-party device, personal data, or information belonging to another individual was accessed, acquired, or examined during this exercise.
+
+The objective of this project was to demonstrate the use of **Android Debug Bridge (ADB)** as a forensic acquisition and analysis tool, while developing practical skills in Android artifact collection, system interrogation, application enumeration, event timeline reconstruction, and device state analysis.
+
+All commands executed were performed in a controlled laboratory environment using:
+
+- Kali Linux 2026.1 (VMware Workstation)
+- Android Debug Bridge (ADB)
+- Personal Android test device (itel P55)
+- Authorized USB debugging connection
+
+This repository is intended solely for:
+
+- Digital Forensics Training
+- DFIR Research
+- Academic Learning
+- Skill Development
+- Portfolio Demonstration
+
+No unauthorized access techniques, privilege escalation methods, data manipulation activities, or intrusive forensic procedures were performed during this examination.
+
+All findings documented in this repository should be interpreted as results obtained from a self-owned test device and must not be considered evidence from a real-world investigation.
+
+> **Note:** The screenshots, artifacts, timelines, and observations contained within this repository were generated from my own device and are published strictly for educational and professional portfolio purposes.
+
